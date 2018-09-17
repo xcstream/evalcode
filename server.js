@@ -36,6 +36,11 @@ client.on('message',async function (topic, message) {
     if(payload.lang=='csharp') filename='Main.cs'
     if(payload.lang=='python') filename='main.py'
     if(payload.lang=='c') filename='main.c'
+    if(payload.lang=='go') filename='main.go'
+    if(payload.lang=='ruby') filename='main.ruby'
+    if(payload.lang=='haskell') filename='main.hs'
+    if(payload.lang=='php') filename='main.php'
+
 
     if(payload.clientId){
         var r = await runcode(payload.url+'/latest',payload.content,filename)
