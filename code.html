@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>code</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script></head>
+<body>
+
+<link href="https://cdn.bootcss.com/codemirror/5.25.2/codemirror.css" rel="stylesheet">
+<link href="https://cdn.bootcss.com/codemirror/5.25.2/addon/hint/show-hint.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/codemirror/5.28.0/theme/material.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/codemirror/5.25.2/codemirror.min.js"></script>
+<script src="https://cdn.bootcss.com/codemirror/5.25.2/mode/clike/clike.min.js"></script>
+<script src="https://cdn.bootcss.com/codemirror/5.25.2/addon/edit/closebrackets.js"></script>
+<script src="https://cdn.bootcss.com/codemirror/5.25.2/keymap/sublime.min.js"></script>
+<script src="https://cdn.bootcss.com/codemirror/5.25.2/addon/hint/show-hint.min.js"></script>
+<script src="//cdn.bootcss.com/codemirror/5.28.0/addon/hint/anyword-hint.js"></script>
+<div style="font-size: 16px;height:600px">
+    <textarea id="code">
+#include <iostream>
+using namespace std;
+int main(int argc, char* argv[]){
+    cout<<"hello"<<endl<<"world";
+    return 0;
+}</textarea>
+</div>
+
+<script>
+    window.editor=CodeMirror.fromTextArea(document.getElementById("code"),{
+        mode:"text/x-csrc",
+        matchBrackets:true,
+        lineNumbers:true,
+        indentUnit:4,
+        theme:"material",
+        keyMap:"sublime",
+        electricChars:true,
+        extraKeys:{
+            Esc: "autocomplete",
+        },
+        value:''
+    });
+</script>
+
+</body>
+</html>
