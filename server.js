@@ -30,8 +30,15 @@ client.on('message',async function (topic, message) {
         return
     }
 
+    var filename
+    if(payload.lang=='cpp') filename='main.cpp'
+    if(payload.lang=='java') filename='Main.java'
+    if(payload.lang=='csharp') filename='Main.cs'
+    if(payload.lang=='python') filename='main.py'
+    if(payload.lang=='c') filename='main.c'
+
     if(payload.clientId){
-        var r = await runcode(payload.url+'/latest',payload.content)
+        var r = await runcode(payload.url+'/latest',payload.content,filename)
         var reply = {
             content:payload.content,
             result:r,
@@ -52,10 +59,11 @@ async function init() {
     // await runcode('https://run.glot.io/languages/python/latest', `print(42+232)` )
 }
 
-async function runcode(url,content){
+async function runcode(url,content,filename){
+
     var body = {
         files:[
-            {name:'main.cpp',content:content}
+            {name:filename,content:content}
         ]
     }
     var opt= {
