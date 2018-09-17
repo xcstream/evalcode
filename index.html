@@ -13,27 +13,26 @@
                 marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
 
         <el-button @click="run" style="width:300px">
-
-            <template v-if="!running">run</template>
+            <template v-if="!running">run<i class="el-icon-arrow-right"></i>
+            </template>
             <template v-else>running</template>
-
         </el-button>
 
         <hr>
         <div>
-            <div>stdout:</div>
-            <div style="background: black;color: white" v-html="stdout">
+            <div><el-tag>stdout</el-tag></div>
+            <div style="background: black;color: white;margin: 3px;padding:2px" v-html="stdout">
             </div>
 
         </div>
         <div>
-            <div>stderr:</div>
-            <div style="background: black;color: white" v-html="stderr">
+            <div><el-tag>stderr</el-tag></div>
+            <div style="background: black;color: white;margin: 3px;padding:2px" v-html="stderr">
             </div>
         </div>
         <div>
-            <div>error:</div>
-            <div style="background: black;color: white" v-html="error">
+            <div><el-tag>error</el-tag></div>
+            <div style="background: black;color: white;margin: 3px;padding:2px" v-html="error">
             </div>
         </div>
 
@@ -47,19 +46,13 @@
             if(message.payloadString){
                 var payload = JSON.parse(message.payloadString)
                 var result = JSON.parse (payload.result)
-
                 console.log(result.stdout)
                 console.log(result.stderr)
                 console.log(result.error)
-
                 var reg=new RegExp("\n","g");
-
                 app.stdout=result.stdout.replace(reg,"<br>");
                 app.stderr=result.stderr.replace(reg,"<br>");
                 app.error=result.error.replace(reg,"<br>");
-
-
-
             }
 
         };
