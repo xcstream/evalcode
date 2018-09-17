@@ -1,0 +1,24 @@
+{
+  "name": "evalcode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xcstream/evalcode.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xcstream/evalcode/issues"
+  },
+  "homepage": "https://github.com/xcstream/evalcode#readme",
+  "dependencies": {
+    "mqtt": "^2.18.8",
+    "node-fetch": "^2.2.0"
+  }
+}
