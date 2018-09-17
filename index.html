@@ -5,25 +5,95 @@
     <script src="https://cdn.bootcss.com/vue/2.5.15/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/element-ui/2.4.0/index.js"></script>
     <link href="https://cdn.bootcss.com/element-ui/2.4.0/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/paho-mqtt/1.0.2/mqttws31.min.js"></script>
 </head>
 <body>
-
-    <iframe src="code.html" width="900px"  height="500px">
-
-    </iframe>
     <div id="vm">
+        <iframe id="ifr" src="code.html"  width="100%" height="320px" frameborder="no" border="0" marginwidth="0"
+                marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
 
+        <el-button @click="run" style="width:300px">
+
+            <template v-if="!running">run</template>
+            <template v-else>running</template>
+
+        </el-button>
+
+        <div>
+            <div>stdout:</div>
+            <div style="background: black;color: white" v-html="stdout">
+            </div>
+
+        </div>
+        <div>
+            <div>stderr:</div>
+            <div style="background: black;color: white" v-html="stderr">
+            </div>
+        </div>
+        <div>
+            <div>error:</div>
+            <div style="background: black;color: white" v-html="error">
+            </div>
+        </div>
 
     </div>
-
     <script>
+        var clientId = "clientId" + new Date().getTime() + '_' + Math.random();
+        window.client = new Paho.MQTT.Client("am.appxc.com", Number(8084), clientId);
+        client.onConnectionLost = function(){};
+        client.onMessageArrived = function(message) {
+            window.app.running = false
+            if(message.payloadString){
+                var payload = JSON.parse(message.payloadString)
+                var result = JSON.parse (payload.result)
+
+                console.log(result.stdout)
+                console.log(result.stderr)
+                console.log(result.error)
+
+                var reg=new RegExp("\n","g");
+
+                app.stdout=result.stdout.replace(reg,"<br>");
+                app.stderr=result.stderr.replace(reg,"<br>");
+                app.error=result.error.replace(reg,"<br>");
 
 
-        var app=new Vue({
+
+            }
+
+        };
+
+        var default_topic = 'xcstream.github.io/evalcode'
+        client.connect({ useSSL: true, onSuccess: function () {
+
+            client.subscribe(clientId)
+        }});
+        
+        
+        window.app=new Vue({
             el:'#vm',
-            data:{},
-            methods:{}
+            data:{
+                stdout:'',
+                stderr:'',
+                error:'',
+                lang:'cpp',
+                result:'',
+                running:false
+            },
 
+            methods:{
+                run:function(){
+                    if(app.running) return
+                    app.running = true
+                    var code=window.frames[0].window.editor.getValue()
+
+                    var payload = ({lang:app.lang, content: code,clientId:clientId })
+                    var message = new Paho.MQTT.Message(JSON.stringify(payload))
+                    message.destinationName = default_topic
+                    client.send(message)
+
+                }
+            }
 
         })
     </script>

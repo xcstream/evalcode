@@ -1,11 +1,12 @@
 var mqtt=require('mqtt')
 var fs = require('fs')
 var fetch=require('node-fetch')
-
+var chalk=require('chalk')
 const token = fs.readFileSync('/opt/gtok','utf-8').trim();
 
 var client  = mqtt.connect('mqtt://am.appxc.com')
 var default_topic = 'xcstream.github.io/evalcode'
+var langmap={}
 
 client.on('connect', function () {
     client.subscribe(default_topic)
@@ -15,31 +16,46 @@ client.on('message',async function (topic, message) {
     console.log( chalk.yellow  ('[new message] ')   +chalk.blue( 'topic:'),
     topic.toString(),chalk.blue( 'payload:') ,mstr)
     var payload = JSON.parse(mstr)
-    if(payload.clientid){
-        var r = await runcode(payload.url,payload.content)
+
+    if(payload.lang){
+
+        payload.url = langmap[payload.lang]
+    }
+    if(!payload.url){
+        console.log(`url not found`)
+        return
+    }
+    if(!payload.clientId){
+        console.log(`clientId not found`)
+        return
+    }
+
+    if(payload.clientId){
+        var r = await runcode(payload.url+'/latest',payload.content)
         var reply = {
             content:payload.content,
             result:r,
         }
-        client.publish(payload.clientid, JSON.stringify(reply))
+        client.publish(payload.clientId, JSON.stringify(reply))
     }
-}
-var langmap={}
+})
 async function init() {
-    var lang = await (await fetch('https://run.glot.io/languages')).text()
-    console.log(lang)
+    var lang = await (await fetch('https://run.glot.io/languages')).json()
 
     for(var o of lang){
         const {name,url} = o
         langmap[name]=url
+
     }
-    await runcode('https://run.glot.io/languages/python/latest', `print(42+232)` )
+
+    console.log(langmap)
+    // await runcode('https://run.glot.io/languages/python/latest', `print(42+232)` )
 }
 
 async function runcode(url,content){
     var body = {
         files:[
-            {name:'main',content:content}
+            {name:'main.cpp',content:content}
         ]
     }
     var opt= {
